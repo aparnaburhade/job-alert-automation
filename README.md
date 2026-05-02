@@ -79,25 +79,6 @@ This system:
 
 ---
 
-## ⚠️ Security Note
-
-Sensitive credentials are NOT included in this repository.
-
-Make sure to exclude:
-
-.env  
-credentials.json  
-
----
-
-## 📸 Demo (Optional)
-
-Add screenshots of:
-- n8n workflow  
-- Telegram alerts  
-
----
-
 ## ⭐ Summary
 
 This project demonstrates:
