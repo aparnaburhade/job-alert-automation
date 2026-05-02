@@ -1,0 +1,325 @@
+{
+  "name": "Job Tracker v1",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://boards-api.greenhouse.io/v1/boards/stripe/jobs",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "04689c26-bc01-43e9-8e5c-1fc7df3d3cb2",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jobs = $json.jobs || [];\n\nreturn jobs.map(job => {\n  return {\n    json: {\n      company: \"Stripe\",\n      title: job.title,\n      location: job.location?.name || \"\",\n      url: job.absolute_url\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "18e006a9-d98e-44b3-827e-0c147ae2c627",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const include = [\"software engineer\", \"backend\", \"full stack\", \"new grad\", \"university graduate\"];\nconst exclude = [\"senior\", \"staff\", \"principal\", \"manager\", \"director\", \"lead\"];\n\nreturn items.filter(item => {\n  const title = (item.json.title || \"\").toLowerCase();\n  const location = (item.json.location || \"\").toLowerCase();\n\n  const hasInclude = include.some(word => title.includes(word));\n  const hasExclude = exclude.some(word => title.includes(word));\n\n  const isUS = location.includes(\"united states\") || location.includes(\"us\") || location.includes(\"remote\");\n\n  return hasInclude && !hasExclude && isUS;\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "4ca4f184-26e7-48ae-9fb3-0c9fa689330c",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "url": "https://api.telegram.org/bot8787200034:AAFuhFOVC5mnCBBqYw1OqypVFFBb4NObLSo/sendMessage",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "8297606123"
+            },
+            {
+              "name": "text",
+              "value": "=🚀 {{$json.company}}\n\n{{$json.title}}\n📍 {{$json.location}}\n\n🔗 {{$json.url}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1504,
+        -16
+      ],
+      "id": "0fe95b17-fbe2-4b47-8fc2-b9b941b0305c",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1UjUWcv6lvz1f2467gx8gjgJT2a1vMauSHausAEIvAH0/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1UjUWcv6lvz1f2467gx8gjgJT2a1vMauSHausAEIvAH0/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "url": "={{$json.url}}",
+            "company": "={{$json.company}}",
+            "title": "={{$json.title}}",
+            "location": "={{$json.location}}",
+            "first_seen": "={{$now}}"
+          },
+          "matchingColumns": [
+            "url"
+          ],
+          "schema": [
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "first_seen",
+              "displayName": "first_seen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1760,
+        0
+      ],
+      "id": "40f26152-d55f-43e2-b481-5b0455f840d1",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "db1OZPJ4OnWFke4j",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1UjUWcv6lvz1f2467gx8gjgJT2a1vMauSHausAEIvAH0/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1UjUWcv6lvz1f2467gx8gjgJT2a1vMauSHausAEIvAH0/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1072,
+        0
+      ],
+      "id": "8b74c0cc-eea8-4711-bac1-12a8a52754a7",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "db1OZPJ4OnWFke4j",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -144,
+        0
+      ],
+      "id": "2042cd80-8ca1-4dee-bbeb-18b3ed4a8b93",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const matchedJobs = $('Code in JavaScript1').all(); // your Match Jobs node\nconst savedRows = $input.all();\n\nconst seenUrls = new Set(\n  savedRows\n    .map(row => row.json.url)\n    .filter(Boolean)\n);\n\nreturn matchedJobs.filter(job => {\n  return !seenUrls.has(job.json.url);\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        0
+      ],
+      "id": "f1575fe0-1546-413a-a934-405262e3e3d6",
+      "name": "Code in JavaScript2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "17c6bf74-852b-49bd-88d8-ff5ddb087262",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "062a3a67e6b4184482a216016e99ed559b2781575b3287b3a77910e3f02bd836"
+  },
+  "id": "IPl9d4oVJK9UnWAJ",
+  "tags": []
+}
