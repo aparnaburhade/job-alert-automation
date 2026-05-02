@@ -43,7 +43,7 @@
     },
     {
       "parameters": {
-        "url": "https://api.telegram.org/bot8787200034:AAFuhFOVC5mnCBBqYw1OqypVFFBb4NObLSo/sendMessage",
+        "url": "https://api.telegram.org/botYOUR_TELEGRAM_BOT_TOKEN/sendMessage",
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
@@ -73,12 +73,12 @@
         "operation": "appendOrUpdate",
         "documentId": {
           "__rl": true,
-          "value": "https://docs.google.com/spreadsheets/d/1UjUWcv6lvz1f2467gx8gjgJT2a1vMauSHausAEIvAH0/edit?gid=0#gid=0",
+          "value": "{your google sheet url}",
           "mode": "url"
         },
         "sheetName": {
           "__rl": true,
-          "value": "https://docs.google.com/spreadsheets/d/1UjUWcv6lvz1f2467gx8gjgJT2a1vMauSHausAEIvAH0/edit?gid=0#gid=0",
+          "value": "{your google sheet url",
           "mode": "url"
         },
         "columns": {
